@@ -10,8 +10,8 @@ public class CoinScript : MonoBehaviour
     protected void OnEnable()
     {
         speed = Random.Range(0, 150) + 200;
-        FindFirstObjectByType<Rigidbody2D>().AddForce(Vector2.left * speed);
-        Destroy(gameObject, 6);
+        this.Push(Vector2.left * speed);
+        Destroy(transform.root.gameObject, 6);
     }
 
 
@@ -19,7 +19,7 @@ public class CoinScript : MonoBehaviour
     {
 
 
-        Destroy(gameObject);
+        Destroy(transform.root.gameObject);
 
 
     }

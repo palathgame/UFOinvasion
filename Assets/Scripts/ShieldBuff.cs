@@ -9,8 +9,9 @@ public class ShieldBuff : BuffScript
         speed = Random.Range(0, 150) + speed;
 
         positiv = true;
-        FindFirstObjectByType<Rigidbody2D>().AddForce(Vector2.left * speed);
-        Destroy(gameObject, 6);
+        this.Push(Vector2.left * speed);
+        Destroy(transform.root.gameObject, 6);
+        FloatingLabel.Attach(transform, "SHIELD", FloatingLabel.ShieldColor);
     }
 
 }

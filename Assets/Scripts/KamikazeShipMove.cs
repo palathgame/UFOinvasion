@@ -17,7 +17,7 @@ public class KamikazeShipMove : EnemyShip
      {
 
         base.Start();
-        FindFirstObjectByType<Rigidbody2D>().AddForce(Vector2.right * -1 * speed);
+        this.Push(Vector2.right * -1 * speed);
 
         Destroy(gameObject, destroyTime);
     }
@@ -28,31 +28,9 @@ public class KamikazeShipMove : EnemyShip
     {
        
 
-        Score.scoreValue += score;
+        Score.scoreValue += ComboScore(score);
 
-        int bufSpam = Random.Range(0, 45);
-
-        if (bufSpam == 1)
-        {
-            GameObject buff = Instantiate(speedBuffs);
-            buff.transform.position = transform.position;
-        }
-        if (bufSpam == 16)
-        {
-            GameObject buff = Instantiate(dmgBuff);
-            buff.transform.position = transform.position;
-        }
-        if (bufSpam == 31)
-        {
-            GameObject buff = Instantiate(healBuff);
-            buff.transform.position = transform.position;
-        }
-
-        if (bufSpam == 40)
-        {
-            GameObject buff = Instantiate(shieldBuff);
-            buff.transform.position = transform.position;
-        }
+        BuffDrops.Roll(transform.position, ComboMultiplier, speedBuffs, dmgBuff, healBuff, shieldBuff, null, false);
         FindFirstObjectByType<AudioManager>().Play("AlienExplosion");
         base.DestoyShip();
     }

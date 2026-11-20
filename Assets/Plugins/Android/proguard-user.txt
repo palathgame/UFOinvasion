@@ -7,5 +7,5 @@
 -keep public class com.google.ads.**{
    public *;
 }
--keepattributes *Annotation*
+-keepattributes Annotation
 -dontobfuscate

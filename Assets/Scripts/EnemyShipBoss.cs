@@ -27,6 +27,10 @@ public class EnemyShipBoss : EnemyShipMove
     {
         base.DestoyShip();
 
+        if (gameManager != null) gameManager.AddBossKill();
+        CameraShake.Shake(0.3f, 0.5f);
+        Haptics.Vibrate();
+
         setBossSpeciesAchievmet();
         
         GameObject buff = Instantiate(healBuff1);  

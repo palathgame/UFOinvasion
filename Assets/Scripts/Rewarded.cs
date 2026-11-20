@@ -7,6 +7,8 @@ public class Rewarded : MonoBehaviour
 {
     public void Start()
     {
+        // Callbacky reklam volaji Unity API -> musi bezet na hlavnim vlakne.
+        MobileAds.RaiseAdEventsOnUnityMainThread = true;
         // Initialize the Google Mobile Ads SDK.
         MobileAds.Initialize((InitializationStatus initStatus) =>
         {
@@ -79,9 +81,22 @@ public class Rewarded : MonoBehaviour
                 Destroy(backMenu);
                 var gameManager = FindAnyObjectByType<InGameManager>();
                 gameManager.GetComponent<InGameManager>().startGame();
+                GameHud.StartCountdown();
                 Destroy(gameObject);
                 // TODO: Reward the user.
                 Debug.Log(String.Format(rewardMsg, reward.Type, reward.Amount));
+            });
+        }
+    }
+
+    // Reklama za odmenu na obrazovce vysledku (x2 mince).
+    public void ShowRewardedForCoins(Action onReward)
+    {
+        if (rewardedAd != null && rewardedAd.CanShowAd())
+        {
+            rewardedAd.Show((Reward reward) =>
+            {
+                if (onReward != null) onReward();
             });
         }
     }

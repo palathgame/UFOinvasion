@@ -19,21 +19,41 @@ public class HighscoresUpload : MonoBehaviour
 
     public void AddNewHighscore(string username, long score)
 	{
-	
-		StartCoroutine(UploadNewHighscore(username, score));
+		// Nulove nebo nesmyslne skore neposilame.
+		if (score <= 0 || score > MaxScore) return;
+
+		StartCoroutine(UploadNewHighscore(SanitizeNick(username), score));
+	}
+
+	private const int MaxNickLength = 16;
+	private const long MaxScore = 100000000;
+
+	// Povoli jen pismena, cisla, mezeru, '-' a '_' (dreamlo pouziva '|' a '/' jako oddelovace).
+	private static string SanitizeNick(string nick)
+	{
+		var sb = new System.Text.StringBuilder();
+		foreach (char c in (nick ?? "").Trim())
+		{
+			if (char.IsLetterOrDigit(c) || c == ' ' || c == '-' || c == '_') sb.Append(c);
+			if (sb.Length >= MaxNickLength) break;
+		}
+		string result = sb.ToString().Trim();
+		return result.Length > 0 ? result : "Player";
 	}
 
 
     IEnumerator UploadNewHighscore(string username, long score)
 	{
-		UnityWebRequest www = new UnityWebRequest(webURL + privateCode + "/add/" + UnityWebRequest.EscapeURL(username) + "/" + score);	
-		yield return www.SendWebRequest();
-
-		if (string.IsNullOrEmpty(www.error))
-			Debug.Log("Upload Successful");
-		else
+		using (UnityWebRequest www = UnityWebRequest.Get(webURL + privateCode + "/add/" + UnityWebRequest.EscapeURL(username) + "/" + score))
 		{
-			Debug.Log("Error uploading: " + www.error);
+			yield return www.SendWebRequest();
+
+			if (www.result == UnityWebRequest.Result.Success)
+				Debug.Log("Upload Successful");
+			else
+			{
+				Debug.Log("Error uploading: " + www.error);
+			}
 		}
 	}
 

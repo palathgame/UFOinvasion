@@ -25,6 +25,7 @@ public class EnemyManager : MonoBehaviour
     private GameObject Boss;
     private string difficulty;
 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -142,6 +143,7 @@ public class EnemyManager : MonoBehaviour
 
         Boss = Instantiate(bosShip[idBoss], enemyPoints.GetRandomSpwanPoint());
         Boss.transform.SetParent(enemyParent);
+        GameHud.TrackBoss(Boss.GetComponentInChildren<EnemyShip>());
         FindAnyObjectByType<AudioManager>().Play("BosSound");
         FindAnyObjectByType<AudioManager>().Stop("BackGround");
 
@@ -172,6 +174,7 @@ public class EnemyManager : MonoBehaviour
     IEnumerator waitforSpamBoss()
     {
         bossDeafeat = true;
+        GameHud.ShowBossWarning(5 - int.Parse(difficulty));
         //yield on a new YieldInstruction that waits for 5 seconds.
         yield return new WaitForSeconds(5 - int.Parse(difficulty));
         int typeBoss = Random.Range(0, 8);

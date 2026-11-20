@@ -30,8 +30,16 @@ public class BuffScript : MonoBehaviour
 
 
 
-        FindFirstObjectByType<Rigidbody2D>().AddForce(Vector2.left * speed);
-        Destroy(gameObject, 6);
+        this.Push(Vector2.left * speed);
+        Destroy(transform.root.gameObject, 6);
+        if (GetComponent<CoinScript>() == null) // prefab mince obsahuje i DMGBuff
+            FloatingLabel.Attach(transform, Label(), positiv ? FloatingLabel.Good : FloatingLabel.Bad);
+    }
+
+    // Text nad power-upem, aby hrac vedel, co sbira.
+    protected virtual string Label()
+    {
+        return positiv ? "FIRE RATE+" : "FIRE RATE-";
     }
 
 
@@ -53,7 +61,7 @@ public class BuffScript : MonoBehaviour
     {
 
 
-        Destroy(gameObject);
+        Destroy(transform.root.gameObject);
 
 
     }

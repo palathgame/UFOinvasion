@@ -60,43 +60,10 @@ public class EnemyShipMove : EnemyShip
         {
             point.SetIsEnemyOnPoint(false);
 
-            Score.scoreValue += score;
+            Score.scoreValue += ComboScore(score);
 
-            int bufSpam = Random.Range(0, 45);
+            BuffDrops.Roll(transform.position, ComboMultiplier, speedBuffs, dmgBuff, healBuff, shieldBuff, coin, true);
 
-            if (bufSpam == 1)
-            {
-                GameObject buff = Instantiate(speedBuffs);
-                buff.transform.position = transform.position;
-            }
-            if (bufSpam == 16)
-            {
-                GameObject buff = Instantiate(dmgBuff);
-                buff.transform.position = transform.position;
-            }
-            if (bufSpam == 31)
-            {
-                GameObject buff = Instantiate(healBuff);
-                buff.transform.position = transform.position;
-            }
-
-            if (bufSpam == 37)
-            {
-                GameObject buff = Instantiate(healBuff);
-                buff.transform.position = transform.position;
-            }
-
-            if (bufSpam == 40)
-            {
-                GameObject buff = Instantiate(shieldBuff);
-                buff.transform.position = transform.position;
-            }
-
-            if (bufSpam == 13)
-            {
-                GameObject buff = Instantiate(coin);
-                buff.transform.position = transform.position;
-            }
             FindAnyObjectByType<AudioManager>().Play("AlienExplosion");
             base.DestoyShip();
 

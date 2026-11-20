@@ -19,7 +19,7 @@ public class ShootSinusoid : MonoBehaviour
     void OnEnable()
     {
 
-        FindFirstObjectByType<Rigidbody2D>().AddForce(Vector2.right * -1 * moveSpeed);
+        this.Push(Vector2.right * -1 * moveSpeed);
         Destroy(gameObject, 5);
 
 

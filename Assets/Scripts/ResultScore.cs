@@ -20,6 +20,70 @@ public class ResultScore : MonoBehaviour
         destroyShips(gameManager, killsAlliens);
         oneGameKills(gameManager, killsAlliens);
 
+        lastScoreCoins = gameManager.AwardScoreCoins(score);
+        kills = killsAlliens;
+        baseText = txt.text;
+        showSummary();
+        createDoubleCoinsOffer();
+
+        PlayerPrefs.Save();
+
+    }
+
+    private long kills;
+    private long lastScoreCoins;
+    private string baseText;
+    private GameObject doubleCoinsButton;
+
+    // Tlacitko "x2 coins" nad tlacitkem Restart: reklama za odmenu zdvoji mince z teto hry.
+    private void createDoubleCoinsOffer()
+    {
+        if (!gameManager.CanDoubleCoins) return;
+
+        GameObject adObj = GameObject.Find("AdIns");
+        Rewarded rewarded = adObj != null ? adObj.GetComponent<Rewarded>() : null;
+        if (rewarded == null || !rewarded.readyAdd()) return;
+
+        BackMenu backMenu = GetComponent<BackMenu>();
+        if (backMenu == null) backMenu = FindAnyObjectByType<BackMenu>();
+        if (backMenu == null || backMenu.restart == null) return;
+
+        // Kopie tlacitka Restart -> stejny vzhled jako zbytek menu.
+        doubleCoinsButton = Instantiate(backMenu.restart.gameObject, backMenu.restart.transform.parent, false);
+        doubleCoinsButton.name = "DoubleCoins";
+        var rt = doubleCoinsButton.GetComponent<RectTransform>();
+        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0f);
+        rt.pivot = new Vector2(0.5f, 0f);
+        rt.anchoredPosition = new Vector2(0, 130);
+        rt.sizeDelta = new Vector2(460, 90);
+
+        Text label = doubleCoinsButton.GetComponentInChildren<Text>();
+        if (label != null)
+        {
+            label.text = "Watch ad: x2 coins (+" + gameManager.GetCoinsThisGame() + ")";
+            label.resizeTextForBestFit = true;
+            label.resizeTextMaxSize = label.fontSize;
+        }
+
+        Button btn = doubleCoinsButton.GetComponent<Button>();
+        btn.onClick = new Button.ButtonClickedEvent();
+        btn.onClick.AddListener(() =>
+        {
+            rewarded.ShowRewardedForCoins(() =>
+            {
+                gameManager.DoubleCoins();
+                PlayerPrefs.Save();
+                showSummary();
+                if (doubleCoinsButton != null) Destroy(doubleCoinsButton);
+                // Reklama je spotrebovana -> "pokracovat za reklamu" uz nejde.
+                if (backMenu != null && backMenu.continueGame != null) backMenu.continueGame.gameObject.SetActive(false);
+            });
+        });
+    }
+
+    private void OnDestroy()
+    {
+        if (doubleCoinsButton != null) Destroy(doubleCoinsButton);
     }
 
 
@@ -64,6 +128,19 @@ public class ResultScore : MonoBehaviour
 
     }
 
+
+    private void showSummary()
+    {
+        Text t = txt.GetComponent<Text>();
+        t.verticalOverflow = VerticalWrapMode.Overflow;
+        string coins = "Coins: +" + gameManager.GetCoinsThisGame();
+        if (lastScoreCoins > 0) coins += "  (+" + lastScoreCoins + " for score)";
+        t.text = baseText
+                + "\nKills: " + kills
+                + "   Bosses: " + gameManager.GetBossesThisGame()
+                + "   Best combo: x" + gameManager.GetBestMultiplier()
+                + "\n" + coins;
+    }
 
     private void destroyShips(InGameManager gameManager,long killsAlliens)
     {

@@ -14,18 +14,13 @@ public class AdIns : MonoBehaviour
 #else
           private string _adUnitId = "unused";
 #endif
-    private void Awake()
-    {
-
-
-        MobileAds.Initialize((InitializationStatus initStatus) =>
-        {
-            
-        });
-    }
+    // Interstitial se ukaze jen pri kazde DeathsPerAd-te smrti.
+    private const int DeathsPerAd = 3;
+    private const string DeathCounterKey = "AdDeathCounter";
 
     void Start()
     {
+        MobileAds.RaiseAdEventsOnUnityMainThread = true;
         MobileAds.Initialize((InitializationStatus initStatus) =>
         {
             RequestInterstitial();
@@ -66,6 +61,17 @@ public class AdIns : MonoBehaviour
 
         return (interstitial != null && interstitial.CanShowAd());
 
+    }
+
+    public void ShowInterstitialCapped()
+    {
+        int deaths = PlayerPrefs.GetInt(DeathCounterKey, 0) + 1;
+        if (deaths >= DeathsPerAd && canAdShow())
+        {
+            ShowInterstitialAd();
+            deaths = 0;
+        }
+        PlayerPrefs.SetInt(DeathCounterKey, deaths);
     }
 
     public void ShowInterstitialAd()  // Show

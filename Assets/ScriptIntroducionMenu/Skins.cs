@@ -58,9 +58,20 @@ public class Skins : MonoBehaviour
         else {      
             newText[0].GetComponent<Text>().text = "Price: " + price;
         }
+        appendBonus();
 
         
     }
+    // Pod cenu / "Owned" pripise bonus skinu (napr. "+10 HP, +1 DMG").
+    private void appendBonus()
+    {
+        string bonus = SkinBonus.Describe(numberSkin);
+        if (bonus == "") return;
+        Text t = newText[0].GetComponent<Text>();
+        t.text += "\n" + bonus;
+        t.verticalOverflow = VerticalWrapMode.Overflow;
+    }
+
     private void Update()
     {
         owned = PlayerPrefs.GetString("Skins");
@@ -105,12 +116,15 @@ public class Skins : MonoBehaviour
         GameObject coinsTextBottom = GameObject.Find("Coins");
         coinsTextBottom.GetComponent<CoinsText>().updateCoins();
         newText[0].GetComponent<Text>().text = "Owned";
+        appendBonus();
+        PlayerPrefs.Save();
 
     }
 
     private void selectSkin  (){
         aktual = PlayerPrefs.GetString("AktualSkin");
         PlayerPrefs.SetString("AktualSkin", numberSkin.ToString());
+        PlayerPrefs.Save();
         GameObject beforePlane = GameObject.Find("plane" + aktual);
         Image[] beforeImage = beforePlane.GetComponentsInChildren<Image>();
         beforeImage[2].GetComponent<Image>().enabled = false;        

@@ -21,6 +21,8 @@ public class StartPageManager : MonoBehaviour
     {
         string userNick = PlayerPrefs.GetString("Nick");
         nickName.GetComponent<InputField>().text = userNick;
+        DailyReward.CheckAndShow();
+        PowerUpHelp.Create(nickName.transform);
     }
     public void StartGame() {
 
@@ -59,6 +61,7 @@ public class StartPageManager : MonoBehaviour
 
         }
         PlayerPrefs.SetString("Games", games.ToString());
+        PlayerPrefs.Save();
 
       //  Destroy(ads);
 

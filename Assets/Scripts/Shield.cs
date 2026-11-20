@@ -58,6 +58,8 @@ public class Shield : MonoBehaviour
     }
 
 
+    public float TimeLeft { get { return gameObject.activeSelf ? Mathf.Max(0, 12 - timeBuff) : 0; } }
+
     public void SetActiveTime() {
 
         gameObject.GetComponent<SpriteRenderer>().material = Resources.Load<Material>("green");

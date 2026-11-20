@@ -12,8 +12,8 @@ public class Laser : Shoot
     {
 
 
-        FindFirstObjectByType<Rigidbody2D>().AddForce(Vector2.right * direction * force);
-        FindFirstObjectByType<Rigidbody2D>().AddForce(Vector2.up * topDirection * force);
+        this.Push(Vector2.right * direction * force);
+        this.Push(Vector2.up * topDirection * force);
 
 
 

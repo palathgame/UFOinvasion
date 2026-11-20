@@ -10,6 +10,7 @@ public class PlaneShip : EnemyShip
     protected override void Start()
     {
         hpBar = GameObject.Find("Main Camera/HpCanvas/HpBar").GetComponent<HeatlhBar>();
+        SkinBonus.Apply(this, GetComponent<Attack>(), SkinBonus.CurrentSkin());
         base.Start();
         ad = GameObject.Find("AdIns");
         
@@ -21,106 +22,89 @@ public class PlaneShip : EnemyShip
         base.DestoyShip();
         Destroy(transform.parent.gameObject);
         FindAnyObjectByType<AudioManager>().Play("PlayerExplosion"); 
-        if(ad != null) { ad.GetComponent<AdIns>().ShowInterstitialAd(); }
+        CameraShake.Shake(0.35f, 0.4f);
+        Haptics.Vibrate(0f);
+        if(ad != null) { ad.GetComponent<AdIns>().ShowInterstitialCapped(); }
         
         Instantiate(backMenu);       
 
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    // Power-up prefaby maji tag a collider na korenu, ale skript a Rigidbody2D
+    // az na potomkovi "Buff" -> komponentu hledame v celem prefabu.
+    private static T FindBuff<T>(GameObject go) where T : Component
     {
-   
-        if (collision.CompareTag("SpeedBuff"))
-        {
-            GameObject buff = collision.gameObject;
-            try { 
-            gameObject.GetComponent<Attack>().buffSpeed(buff.GetComponent<BuffScript>().getStat());     
-            buff.GetComponent<BuffScript>().DestroyBuff();
-            }
-            catch
-            {
-                Debug.Log("Buff nots here ");
-            }
-
-        }
-
-
-        if (collision.CompareTag("DmgBuff"))
-        {
-            GameObject buff = collision.gameObject;
-            try { 
-            gameObject.GetComponent<Attack>().buffDmg(buff.GetComponent<DMGBuff>().getStatDMG());
-            buff.GetComponent<BuffScript>().DestroyBuff();
-                 }
-            catch
-                {
-            Debug.Log("Buff nots here ");
-                 }
-
+        T c = go.GetComponentInChildren<T>();
+        if (c == null) c = go.GetComponentInParent<T>();
+        return c;
     }
 
+    // Smaze cely prefab power-upu (koren i potomka), aby nezustal visici collider.
+    private static void RemoveBuff(GameObject go)
+    {
+        Destroy(go.transform.root.gameObject);
+    }
 
-        if (collision.CompareTag("HealBuff"))
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        GameObject buff = collision.gameObject;
+
+        MagnetBuff magnet = FindBuff<MagnetBuff>(buff);
+        if (magnet != null)
         {
-            GameObject buff = collision.gameObject;
-            try
-            {
-                Heal(buff.GetComponent<HealBuf>().getStatHeal());
-                buff.GetComponent<BuffScript>().DestroyBuff();
-            }
-            catch {
-                Debug.Log("Buff nots here ");
-                }
-
+            MagnetEffect.Activate(gameObject, MagnetBuff.Duration);
+            RemoveBuff(buff);
+            return;
         }
 
-        if (collision.CompareTag("HealBuff1"))
+        if (collision.CompareTag("SpeedBuff"))
         {
-            GameObject buff = collision.gameObject;
-            Heal(buff.GetComponent<HealBuf1>().getStatHeal());
-            buff.GetComponent<BuffScript>().DestroyBuff();
-
+            BuffScript b = FindBuff<BuffScript>(buff);
+            Attack attack = GetComponent<Attack>();
+            if (b != null && attack != null) attack.buffSpeed(b.getStat());
+            RemoveBuff(buff);
         }
-
-        if (collision.CompareTag("ShieldBuff"))
+        else if (collision.CompareTag("DmgBuff"))
+        {
+            DMGBuff b = FindBuff<DMGBuff>(buff);
+            Attack attack = GetComponent<Attack>();
+            if (b != null && attack != null) attack.buffDmg(b.getStatDMG());
+            RemoveBuff(buff);
+        }
+        else if (collision.CompareTag("HealBuff"))
+        {
+            HealBuf b = FindBuff<HealBuf>(buff);
+            if (b != null) Heal(b.getStatHeal());
+            RemoveBuff(buff);
+        }
+        else if (collision.CompareTag("HealBuff1"))
+        {
+            HealBuf1 b = FindBuff<HealBuf1>(buff);
+            if (b != null) Heal(b.getStatHeal());
+            RemoveBuff(buff);
+        }
+        else if (collision.CompareTag("ShieldBuff"))
         {
             shieldBuff.SetActive(true);
             shieldBuff.GetComponent<Shield>().SetActiveTime();
-            GameObject buff = collision.gameObject;
-            try { 
-            buff.GetComponent<BuffScript>().DestroyBuff();
-            }
-            catch
-            {
-                Debug.Log("Buff nots here ");
-            }
-
-
+            RemoveBuff(buff);
         }
-
-        if (collision.CompareTag("Coin"))
+        else if (collision.CompareTag("Coin"))
         {
-            GameObject buff = collision.gameObject;
-            try {buff.GetComponent<BuffScript>().DestroyBuff();
+            RemoveBuff(buff);
 
             string coins = PlayerPrefs.GetString("Coins");
             if (coins == "") { coins = "0"; }
             coins = (1 + long.Parse(coins)).ToString();
             PlayerPrefs.SetString("Coins", coins);
-            }
-                catch
-            {
-                Debug.Log("Buff nots here ");
-            }
+            if (gameManager != null) gameManager.AddCoin();
+        }
     }
-
-    }
-
 
     private void Heal(int heal) {
 
         hp += heal;
-        if (hp > 100) hp = 100; 
+        if (hp > MaxHp) hp = MaxHp; 
         hpBar.setHealth(hp);
         checkHP(hp);
 
@@ -131,6 +115,8 @@ public class PlaneShip : EnemyShip
     {
         if (!shieldBuff.activeSelf) { 
             base.TakeDamage(Damage);
+            CameraShake.Shake(0.12f, 0.15f);
+            Haptics.Vibrate();
         } 
 
     }

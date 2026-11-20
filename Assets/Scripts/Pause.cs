@@ -17,10 +17,12 @@ public class Pause : MonoBehaviour
 
     public void PauseGame()
     {
+        if (GameHud.IsCountingDown) return;
+
         if (pause)
         {
             pause = false;
-            Time.timeScale = 1;
+            GameHud.StartCountdown(); // 3-2-1 a pak Time.timeScale = 1
             childrenImages[1].gameObject.SetActive(true);
             childrenImages[2].gameObject.SetActive(false);
         }

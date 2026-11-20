@@ -14,8 +14,15 @@ public class HealBuf1 : BuffScript
       gameObject.GetComponent<Renderer>().material.SetColor("_Color", Color.green);
 
 
-        FindFirstObjectByType<Rigidbody2D>().AddForce(Vector2.left * speed);
-        Destroy(gameObject, 6);
+        this.Push(Vector2.left * speed);
+        // Mazat cely prefab (koren ma vlastni collider), ne jen tenhle objekt.
+        Destroy(transform.root.gameObject, 6);
+        FloatingLabel.Attach(transform, "HP +100", FloatingLabel.Good);
+    }
+
+    public new void DestroyBuff()
+    {
+        Destroy(transform.root.gameObject);
     }
 
     public int getStatHeal()

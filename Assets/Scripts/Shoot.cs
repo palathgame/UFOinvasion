@@ -13,7 +13,7 @@ public class Shoot : MonoBehaviour
     {
 
 
-        FindFirstObjectByType<Rigidbody2D>().AddForce(Vector2.right * direction * force);
+        this.Push(Vector2.right * direction * force);
         Destroy(gameObject,lifeTime);
     }
 

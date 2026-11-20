@@ -16,8 +16,8 @@ public class ShotWave : MonoBehaviour
         int top = Random.Range(-1, 3);
         int randomSpeed = Random.Range(-50, 100);
 
-        FindFirstObjectByType<Rigidbody2D>().AddForce(Vector2.up * (top * force/4-randomSpeed));
-        FindFirstObjectByType<Rigidbody2D>().AddForce(Vector2.right * direction * force);
+        this.Push(Vector2.up * (top * force/4-randomSpeed));
+        this.Push(Vector2.right * direction * force);
         Destroy(gameObject, lifeTime);
 
         

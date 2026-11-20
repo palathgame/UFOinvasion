@@ -14,6 +14,9 @@ public class Attack : MonoBehaviour
     protected float innerAttackRate = 0;
     private int dmgBuff = 0;
 
+    // Trvaly bonus poskozeni (napr. ze skinu), na rozdil od dmgBuff nevyprsi.
+    [HideInInspector] public int baseDmgBonus = 0;
+
 
     // Update is called once per frame
     void Update()
@@ -26,7 +29,7 @@ public class Attack : MonoBehaviour
 
             if (shoot.GetComponent<Shoot>()) {
 
-                shoot.GetComponent<Shoot>().addDmg(dmgBuff);
+                shoot.GetComponent<Shoot>().addDmg(dmgBuff + baseDmgBonus);
             }
 
 
@@ -63,6 +66,12 @@ public class Attack : MonoBehaviour
 
     }
 
+
+    // Pro HUD: zaporna hodnota = rychlejsi strelba.
+    public float SpeedBuff { get { return speedBuff; } }
+    public float SpeedBuffTimeLeft { get { return speedBuff != 0 ? Mathf.Max(0, 10 - timeBuffSpeed) : 0; } }
+    public int DmgBuff { get { return dmgBuff; } }
+    public float DmgBuffTimeLeft { get { return dmgBuff != 0 ? Mathf.Max(0, 10 - timeBuffDmg) : 0; } }
 
     public void buffSpeed(float add) {
        
