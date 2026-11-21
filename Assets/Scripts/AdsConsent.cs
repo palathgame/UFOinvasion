@@ -37,6 +37,11 @@ public class AdsConsent : MonoBehaviour
         gathering = true;
 
         MobileAds.RaiseAdEventsOnUnityMainThread = true;
+
+        // Doporuceni Google: souhlas z minuleho spusteni plati hned -> reklamy se nacitaji
+        // soubezne s aktualizaci (a i kdyby aktualizace treba bez internetu selhala).
+        if (ConsentInformation.CanRequestAds()) TryInitAds();
+
         var request = new ConsentRequestParameters { TagForUnderAgeOfConsent = false };
 
         ConsentInformation.Update(request, (FormError updateError) => RunOnMain(() =>
@@ -84,6 +89,10 @@ public class AdsConsent : MonoBehaviour
     {
         gathering = false;
         consentDone = true;
+        // Pro diagnostiku v logcatu (adb logcat -s Unity).
+        Debug.Log("UMP consent: status=" + ConsentInformation.ConsentStatus
+                  + " canRequestAds=" + ConsentInformation.CanRequestAds()
+                  + " privacyOptions=" + ConsentInformation.PrivacyOptionsRequirementStatus);
         TryInitAds();
     }
 
@@ -91,8 +100,10 @@ public class AdsConsent : MonoBehaviour
     {
         if (initStarted || !ConsentInformation.CanRequestAds()) return;
         initStarted = true;
+        Debug.Log("AdMob: initializing");
         MobileAds.Initialize((InitializationStatus status) => RunOnMain(() =>
         {
+            Debug.Log("AdMob: initialized");
             adsReady = true;
             var list = waiting.ToArray();
             waiting.Clear();

@@ -23,6 +23,7 @@ public class ResultScore : MonoBehaviour
         lastScoreCoins = gameManager.AwardScoreCoins(score);
         kills = killsAlliens;
         baseText = txt.text;
+        layoutWindow();
         showSummary();
         createDoubleCoinsOffer();
 
@@ -35,7 +36,7 @@ public class ResultScore : MonoBehaviour
     private string baseText;
     private GameObject doubleCoinsButton;
 
-    // Tlacitko "x2 coins" nad tlacitkem Restart: reklama za odmenu zdvoji mince z teto hry.
+    // Tlacitko "x2 coins" nad radou tlacitek: reklama za odmenu zdvoji mince z teto hry.
     private void createDoubleCoinsOffer()
     {
         if (!gameManager.CanDoubleCoins) return;
@@ -46,16 +47,17 @@ public class ResultScore : MonoBehaviour
 
         BackMenu backMenu = GetComponent<BackMenu>();
         if (backMenu == null) backMenu = FindAnyObjectByType<BackMenu>();
-        if (backMenu == null || backMenu.restart == null) return;
+        if (backMenu == null || backMenu.continueGame == null) return;
 
-        // Kopie tlacitka Restart -> stejny vzhled jako zbytek menu.
-        doubleCoinsButton = Instantiate(backMenu.restart.gameObject, backMenu.restart.transform.parent, false);
+        // Kopie tlacitka "Watch ad to continue" (ma textovy popisek) -> stejny vzhled jako zbytek menu.
+        doubleCoinsButton = Instantiate(backMenu.continueGame.gameObject, backMenu.continueGame.transform.parent, false);
+        doubleCoinsButton.SetActive(true);
         doubleCoinsButton.name = "DoubleCoins";
         var rt = doubleCoinsButton.GetComponent<RectTransform>();
         rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0f);
         rt.pivot = new Vector2(0.5f, 0f);
-        rt.anchoredPosition = new Vector2(0, 130);
-        rt.sizeDelta = new Vector2(460, 90);
+        rt.anchoredPosition = new Vector2(0, 160);
+        rt.sizeDelta = new Vector2(620, 90);
 
         Text label = doubleCoinsButton.GetComponentInChildren<Text>();
         if (label != null)
@@ -132,14 +134,81 @@ public class ResultScore : MonoBehaviour
     private void showSummary()
     {
         Text t = txt.GetComponent<Text>();
-        t.verticalOverflow = VerticalWrapMode.Overflow;
-        string coins = "Coins: +" + gameManager.GetCoinsThisGame();
-        if (lastScoreCoins > 0) coins += "  (+" + lastScoreCoins + " for score)";
-        t.text = baseText
-                + "\nKills: " + kills
-                + "   Bosses: " + gameManager.GetBossesThisGame()
-                + "   Best combo: x" + gameManager.GetBestMultiplier()
-                + "\n" + coins;
+        string coins = "Coins  <color=#FFD633>+" + gameManager.GetCoinsThisGame() + "</color>";
+        if (lastScoreCoins > 0) coins += "  <size=36>(+" + lastScoreCoins + " for score)</size>";
+        t.text = "<size=76>" + baseText + "</size>\n"
+                + "<size=50>Kills  " + kills
+                + "     Bosses  " + gameManager.GetBossesThisGame()
+                + "     Best combo  x" + gameManager.GetBestMultiplier()
+                + "\n" + coins + "</size>";
+    }
+
+    // Okno vysledku: vetsi panel, skore nahore, statistiky pod nim, tlacitka v rade dole.
+    private void layoutWindow()
+    {
+        Text t = txt.GetComponent<Text>();
+        bool newHigh = t.color == Color.red;
+        var panel = t.transform.parent as RectTransform;
+        if (panel == null) return;
+
+        panel.sizeDelta = new Vector2(1100, 620);
+        var panelImg = panel.GetComponent<Image>();
+        if (panelImg != null)
+        {
+            panelImg.color = new Color(0.08f, 0.1f, 0.2f, 0.93f);
+            var outline = panel.GetComponent<Outline>();
+            if (outline == null) outline = panel.gameObject.AddComponent<Outline>();
+            outline.effectColor = new Color(1f, 0.85f, 0.2f);
+            outline.effectDistance = new Vector2(4, -4);
+        }
+
+        // Text: horni cast panelu nad tlacitky.
+        var trt = t.rectTransform;
+        trt.anchorMin = new Vector2(0f, 1f);
+        trt.anchorMax = new Vector2(1f, 1f);
+        trt.pivot = new Vector2(0.5f, 1f);
+        trt.anchoredPosition = new Vector2(0, -30);
+        trt.sizeDelta = new Vector2(-60, 330);
+        t.supportRichText = true;
+        t.resizeTextForBestFit = false;
+        t.horizontalOverflow = HorizontalWrapMode.Wrap;
+        t.verticalOverflow = VerticalWrapMode.Truncate;
+        t.alignment = TextAnchor.MiddleCenter;
+        t.lineSpacing = 1.1f;
+        t.color = newHigh ? new Color(1f, 0.85f, 0.2f) : Color.white;
+        if (newHigh) baseText = "NEW HIGH SCORE!\n" + score;
+        var shadow = t.GetComponent<Shadow>();
+        if (shadow == null) shadow = t.gameObject.AddComponent<Shadow>();
+        shadow.effectColor = new Color(0f, 0f, 0f, 0.6f);
+        shadow.effectDistance = new Vector2(3, -3);
+
+        // Tlacitka: [Watch ad to continue]  [restart]  [Menu]
+        BackMenu menu = GetComponent<BackMenu>();
+        if (menu == null) menu = FindAnyObjectByType<BackMenu>();
+        if (menu == null) return;
+        placeButton(menu.continueGame, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(40, 40), new Vector2(380, 110));
+        placeButton(menu.restart, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0, 40), new Vector2(130, 110));
+        placeButton(menu.yourButton, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-40, 40), new Vector2(300, 110));
+    }
+
+    private static void placeButton(Button b, Vector2 anchor, Vector2 pivot, Vector2 pos, Vector2 size)
+    {
+        if (b == null) return;
+        var rt = b.GetComponent<RectTransform>();
+        rt.anchorMin = rt.anchorMax = anchor;
+        rt.pivot = pivot;
+        rt.anchoredPosition = pos;
+        rt.sizeDelta = size;
+        var label = b.GetComponentInChildren<Text>();
+        if (label != null)
+        {
+            label.resizeTextForBestFit = true;
+            label.resizeTextMinSize = 20;
+            label.resizeTextMaxSize = Mathf.Max(label.fontSize, 60);
+            var lrt = label.rectTransform;
+            lrt.offsetMin = new Vector2(10, 6);
+            lrt.offsetMax = new Vector2(-10, -6);
+        }
     }
 
     private void destroyShips(InGameManager gameManager,long killsAlliens)
