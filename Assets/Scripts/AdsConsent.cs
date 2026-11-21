@@ -24,8 +24,9 @@ public class AdsConsent : MonoBehaviour
     {
         get
         {
-            return consentDone &&
-                   ConsentInformation.PrivacyOptionsRequirementStatus == PrivacyOptionsRequirementStatus.Required;
+            if (!consentDone) return false;
+            try { return ConsentInformation.PrivacyOptionsRequirementStatus == PrivacyOptionsRequirementStatus.Required; }
+            catch (Exception) { return false; }
         }
     }
 
@@ -38,26 +39,43 @@ public class AdsConsent : MonoBehaviour
 
         MobileAds.RaiseAdEventsOnUnityMainThread = true;
 
-        // Doporuceni Google: souhlas z minuleho spusteni plati hned -> reklamy se nacitaji
-        // soubezne s aktualizaci (a i kdyby aktualizace treba bez internetu selhala).
-        if (ConsentInformation.CanRequestAds()) TryInitAds();
-
-        var request = new ConsentRequestParameters { TagForUnderAgeOfConsent = false };
-
-        ConsentInformation.Update(request, (FormError updateError) => RunOnMain(() =>
+        try
         {
-            if (updateError != null)
+            // Doporuceni Google: souhlas z minuleho spusteni plati hned -> reklamy se nacitaji
+            // soubezne s aktualizaci (a i kdyby aktualizace treba bez internetu selhala).
+            if (ConsentInformation.CanRequestAds()) TryInitAds();
+
+            var request = new ConsentRequestParameters { TagForUnderAgeOfConsent = false };
+
+            ConsentInformation.Update(request, (FormError updateError) => RunOnMain(() =>
             {
-                Debug.LogWarning("UMP update failed: " + updateError.Message);
-                FinishConsent();
-                return;
-            }
-            ConsentForm.LoadAndShowConsentFormIfRequired((FormError formError) => RunOnMain(() =>
-            {
-                if (formError != null) Debug.LogWarning("UMP form failed: " + formError.Message);
-                FinishConsent();
+                if (updateError != null)
+                {
+                    Debug.LogWarning("UMP update failed: " + updateError.Message);
+                    FinishConsent();
+                    return;
+                }
+                try
+                {
+                    ConsentForm.LoadAndShowConsentFormIfRequired((FormError formError) => RunOnMain(() =>
+                    {
+                        if (formError != null) Debug.LogWarning("UMP form failed: " + formError.Message);
+                        FinishConsent();
+                    }));
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("UMP form crashed: " + e);
+                    FinishConsent();
+                }
             }));
-        }));
+        }
+        catch (Exception e)
+        {
+            // Napr. chybejici tridy UMP v buildu (ProGuard) - menu nesmi spadnout.
+            Debug.LogError("UMP crashed: " + e);
+            FinishConsent();
+        }
     }
 
     // Zavola action, az bude souhlas vyreseny a AdMob inicializovany.
@@ -90,15 +108,23 @@ public class AdsConsent : MonoBehaviour
         gathering = false;
         consentDone = true;
         // Pro diagnostiku v logcatu (adb logcat -s Unity).
-        Debug.Log("UMP consent: status=" + ConsentInformation.ConsentStatus
-                  + " canRequestAds=" + ConsentInformation.CanRequestAds()
-                  + " privacyOptions=" + ConsentInformation.PrivacyOptionsRequirementStatus);
+        try
+        {
+            Debug.Log("UMP consent: status=" + ConsentInformation.ConsentStatus
+                      + " canRequestAds=" + ConsentInformation.CanRequestAds()
+                      + " privacyOptions=" + ConsentInformation.PrivacyOptionsRequirementStatus);
+        }
+        catch (Exception e) { Debug.LogError("UMP status failed: " + e); }
         TryInitAds();
     }
 
     private static void TryInitAds()
     {
-        if (initStarted || !ConsentInformation.CanRequestAds()) return;
+        if (initStarted) return;
+        bool canRequest;
+        try { canRequest = ConsentInformation.CanRequestAds(); }
+        catch (Exception e) { Debug.LogError("UMP CanRequestAds failed: " + e); canRequest = false; }
+        if (!canRequest) return;
         initStarted = true;
         Debug.Log("AdMob: initializing");
         MobileAds.Initialize((InitializationStatus status) => RunOnMain(() =>
