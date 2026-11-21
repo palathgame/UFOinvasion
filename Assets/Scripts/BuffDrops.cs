@@ -4,9 +4,13 @@ using UnityEngine;
 public static class BuffDrops
 {
     // Sance na minci 1:N podle nasobice komba (x1, x2, x3).
-    private const int CoinOddsX1 = 45;
-    private const int CoinOddsX2 = 40;
-    private const int CoinOddsX3 = 30;
+    private const int CoinOddsX1 = 40;
+    private const int CoinOddsX2 = 35;
+    private const int CoinOddsX3 = 25;
+    // Totez s aktivnim magnetem.
+    private const int MagnetCoinOddsX1 = 15;
+    private const int MagnetCoinOddsX2 = 10;
+    private const int MagnetCoinOddsX3 = 5;
 
     public static void Roll(Vector3 pos, int multiplier,
         GameObject speed, GameObject dmg, GameObject heal, GameObject shield, GameObject coin,
@@ -21,7 +25,9 @@ public static class BuffDrops
 
         if (coin != null)
         {
-            int odds = multiplier >= 3 ? CoinOddsX3 : multiplier == 2 ? CoinOddsX2 : CoinOddsX1;
+            int odds = MagnetEffect.IsActive
+                ? (multiplier >= 3 ? MagnetCoinOddsX3 : multiplier == 2 ? MagnetCoinOddsX2 : MagnetCoinOddsX1)
+                : (multiplier >= 3 ? CoinOddsX3 : multiplier == 2 ? CoinOddsX2 : CoinOddsX1);
             if (Random.Range(0, odds) == 0) Spawn(coin, pos);
         }
     }

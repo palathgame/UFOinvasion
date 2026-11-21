@@ -404,7 +404,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f725aef16f74ce469cffd57e4d8c525, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  price: 100
+  price: 200
   buyAlert: {fileID: 6792441216875453255}
 --- !u!114 &1902155657264596113
 MonoBehaviour:
@@ -554,7 +554,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f725aef16f74ce469cffd57e4d8c525, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  price: 250
+  price: 500
   buyAlert: {fileID: 6792441216875453255}
 --- !u!114 &5449075205881729011
 MonoBehaviour:
@@ -1291,7 +1291,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f725aef16f74ce469cffd57e4d8c525, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  price: 100
+  price: 200
   buyAlert: {fileID: 6792441216875453255}
 --- !u!114 &913095444685692446
 MonoBehaviour:
@@ -1833,7 +1833,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f725aef16f74ce469cffd57e4d8c525, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  price: 500
+  price: 1000
   buyAlert: {fileID: 6792441216875453255}
 --- !u!114 &7271400907047312642
 MonoBehaviour:
@@ -2094,7 +2094,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f725aef16f74ce469cffd57e4d8c525, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  price: 250
+  price: 500
   buyAlert: {fileID: 6792441216875453255}
 --- !u!114 &2970076385073216395
 MonoBehaviour:
@@ -2510,7 +2510,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f725aef16f74ce469cffd57e4d8c525, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  price: 200
+  price: 400
   buyAlert: {fileID: 6792441216875453255}
 --- !u!114 &1013096328307544846
 MonoBehaviour:
@@ -2810,7 +2810,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f725aef16f74ce469cffd57e4d8c525, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  price: 100
+  price: 200
   buyAlert: {fileID: 6792441216875453255}
 --- !u!114 &549165217687940162
 MonoBehaviour:
@@ -3672,7 +3672,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f725aef16f74ce469cffd57e4d8c525, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  price: 100
+  price: 200
   buyAlert: {fileID: 6792441216875453255}
 --- !u!114 &6503980215996079508
 MonoBehaviour:

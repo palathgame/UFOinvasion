@@ -23,6 +23,8 @@ public class StartPageManager : MonoBehaviour
         nickName.GetComponent<InputField>().text = userNick;
         AdsConsent.Gather(); // souhlas s reklamami (formular jen kde je povinny)
         DailyReward.CheckAndShow();
+        // Zadost o recenzi jen kdyz zrovna nevyskocila denni odmena.
+        if (FindAnyObjectByType<DailyReward>() == null) ReviewPrompt.TryShow();
         PowerUpHelp.Create(nickName.transform);
     }
     public void StartGame() {

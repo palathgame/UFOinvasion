@@ -17,7 +17,7 @@ public class PowerUpHelp : MonoBehaviour
     {
         new Entry { color = new Color(0.4f, 1f, 0.4f), title = "GREEN power-up", text = "Bonus: faster shooting, more damage or healing." },
         new Entry { color = new Color(1f, 0.4f, 0.4f), title = "RED power-up", text = "Penalty: slower shooting, less damage or lost HP. Avoid it!" },
-        new Entry { color = new Color(1f, 0.85f, 0.2f), title = "COIN", text = "Buy new ships. +1 coin per 1000 points. Combo x2 / x3 = more coins drop." },
+        new Entry { color = new Color(1f, 0.85f, 0.2f), title = "COIN", text = "Buy new ships. +1 coin per 1000 points. Combo x2 / x3 or MAGNET = more coins drop." },
     };
 
     private Font font;
@@ -45,7 +45,7 @@ public class PowerUpHelp : MonoBehaviour
         var rt = GetComponent<RectTransform>();
         rt.anchorMin = rt.anchorMax = new Vector2(1f, 1f);
         rt.pivot = new Vector2(1f, 1f);
-        rt.anchoredPosition = new Vector2(-30, -30);
+        rt.anchoredPosition = new Vector2(-90, -80);
         rt.sizeDelta = new Vector2(110, 110);
 
         var img = gameObject.AddComponent<Image>();

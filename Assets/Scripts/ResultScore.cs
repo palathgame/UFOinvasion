@@ -17,6 +17,7 @@ public class ResultScore : MonoBehaviour
         killsAlliens = gameManager.GetComponent<InGameManager>().getKillsAliens();
 
         highScore();
+        if (score > HighScore || gameManager.GetBossesThisGame() > 0) ReviewPrompt.MarkGoodGame();
         destroyShips(gameManager, killsAlliens);
         oneGameKills(gameManager, killsAlliens);
 

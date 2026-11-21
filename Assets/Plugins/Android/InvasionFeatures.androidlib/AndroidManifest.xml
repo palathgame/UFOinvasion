@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hra je zamcena na sirku (screenOrientation="landscape"), z toho Google Play odvodi
+     povinnou funkci android.hardware.screen.landscape a omezi dostupnost aplikace.
+     Tady ji vyslovne oznacujeme jako volitelnou; orientace hry se tim nemeni. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.invasion.features" android:versionName="1.0" android:versionCode="1">
+  <uses-feature android:name="android.hardware.screen.landscape" android:required="false" />
+  <uses-feature android:name="android.hardware.screen.portrait" android:required="false" />
+</manifest>

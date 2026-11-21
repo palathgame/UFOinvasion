@@ -4,7 +4,7 @@ using UnityEngine;
 // Nema vlastni prefab: vyrobi se z prefabu stitu, kteremu se vymeni skript a sprite.
 public class MagnetBuff : MonoBehaviour
 {
-    public const float Duration = 8f;
+    public const float Duration = 12f;
     public static readonly Color Tint = new Color(0.3f, 1f, 0.4f);
 
     public static void Spawn(GameObject template, Vector3 pos)

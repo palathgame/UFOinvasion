@@ -4,15 +4,24 @@ using UnityEngine;
 public class MagnetEffect : MonoBehaviour
 {
     private const float PullSpeed = 10f;
+    // Dokud magnet bezi, padaji mince castej (sance viz BuffDrops).
+    private static MagnetEffect current;
     private float timeLeft;
 
     public float TimeLeft { get { return Mathf.Max(0f, timeLeft); } }
+    public static bool IsActive { get { return current != null && current.timeLeft > 0f; } }
 
     public static void Activate(GameObject player, float duration)
     {
         var m = player.GetComponent<MagnetEffect>();
         if (m == null) m = player.AddComponent<MagnetEffect>();
         m.timeLeft = duration;
+        current = m;
+    }
+
+    private void OnDestroy()
+    {
+        if (current == this) current = null;
     }
 
     private void Update()

@@ -293,7 +293,7 @@ public class GameHud : MonoBehaviour
         var magnet = player.GetComponent<MagnetEffect>();
         if (magnet != null && magnet.TimeLeft > 0)
         {
-            sb.Append("<color=#FF73FF>MAGNET</color>  ").Append(Mathf.CeilToInt(magnet.TimeLeft)).Append("s\n");
+            sb.Append("<color=#FF73FF>MAGNET</color> <color=#FFD633>more coins</color>  ").Append(Mathf.CeilToInt(magnet.TimeLeft)).Append("s\n");
         }
         buffText.text = sb.ToString();
     }
