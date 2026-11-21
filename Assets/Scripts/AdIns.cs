@@ -20,11 +20,8 @@ public class AdIns : MonoBehaviour
 
     void Start()
     {
-        MobileAds.RaiseAdEventsOnUnityMainThread = true;
-        MobileAds.Initialize((InitializationStatus initStatus) =>
-        {
-            RequestInterstitial();
-        });
+        // Reklamy az po souhlasu (AdsConsent inicializuje AdMob).
+        AdsConsent.WhenAdsReady(() => { if (this != null) RequestInterstitial(); });
 
 
     }

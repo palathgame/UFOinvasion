@@ -76,3 +76,6 @@ crashlytics-build.properties
 /.utmp/
 /[Aa]ssets/_Recovery/
 /[Aa]ssets/_Recovery.meta
+
+# Vystupy nastroje Tools > Store Media
+/StoreMedia/

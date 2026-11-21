@@ -107,6 +107,20 @@ public class PowerUpHelp : MonoBehaviour
 
         MakeText(box.transform, "Kill enemies quickly in a row for a COMBO score multiplier!   (tap to close)", 28,
             new Color(1f, 1f, 1f, 0.7f), new Vector2(0, -255), new Vector2(1250, 60), TextAnchor.MiddleCenter);
+
+        // Zmena souhlasu s reklamami - Google ji vyzaduje tam, kde plati GDPR.
+        if (AdsConsent.PrivacyOptionsRequired)
+        {
+            var btn = MakeRect(panel.transform, "PrivacySettings", new Vector2(0, -345), new Vector2(420, 80));
+            var img = btn.AddComponent<Image>();
+            img.color = new Color(1f, 0.85f, 0.2f);
+            btn.AddComponent<Button>().onClick.AddListener(() =>
+            {
+                Destroy(panel);
+                AdsConsent.ShowPrivacyOptions();
+            });
+            MakeText(btn.transform, "Privacy settings", 36, new Color(0.1f, 0.1f, 0.15f), Vector2.zero, new Vector2(420, 80), TextAnchor.MiddleCenter);
+        }
     }
 
     private void OnDestroy()

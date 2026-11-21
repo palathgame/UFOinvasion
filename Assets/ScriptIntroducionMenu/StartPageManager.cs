@@ -21,6 +21,7 @@ public class StartPageManager : MonoBehaviour
     {
         string userNick = PlayerPrefs.GetString("Nick");
         nickName.GetComponent<InputField>().text = userNick;
+        AdsConsent.Gather(); // souhlas s reklamami (formular jen kde je povinny)
         DailyReward.CheckAndShow();
         PowerUpHelp.Create(nickName.transform);
     }

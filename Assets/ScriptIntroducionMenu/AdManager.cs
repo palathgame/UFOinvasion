@@ -10,10 +10,8 @@ public class AdManager : MonoBehaviour
     [System.Obsolete]
     void Start()
     {
-        // Initialize the Google Mobile Ads SDK.
-        MobileAds.Initialize(initStatus => { });
-
-        this.RequestBanner();
+        // Banner az po souhlasu s reklamami (AdsConsent inicializuje AdMob).
+        AdsConsent.WhenAdsReady(() => { if (this != null) RequestBanner(); });
      /*   this.RequestInterstitial();*/
     }
 

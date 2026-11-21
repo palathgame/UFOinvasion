@@ -7,14 +7,8 @@ public class Rewarded : MonoBehaviour
 {
     public void Start()
     {
-        // Callbacky reklam volaji Unity API -> musi bezet na hlavnim vlakne.
-        MobileAds.RaiseAdEventsOnUnityMainThread = true;
-        // Initialize the Google Mobile Ads SDK.
-        MobileAds.Initialize((InitializationStatus initStatus) =>
-        {
-            LoadRewardedAd();
-            // This callback is called once the MobileAds SDK is initialized.
-        });
+        // Reklamy az po souhlasu (AdsConsent inicializuje AdMob a nastavi hlavni vlakno).
+        AdsConsent.WhenAdsReady(() => { if (this != null) LoadRewardedAd(); });
     }
     // These ad units are configured to always serve test ads.
 #if UNITY_ANDROID
