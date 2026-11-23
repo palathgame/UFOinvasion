@@ -27,6 +27,8 @@ public class ResultScore : MonoBehaviour
         layoutWindow();
         showSummary();
         createDoubleCoinsOffer();
+        QuestToast.Show(DailyQuests.ReportGame(killsAlliens, gameManager.GetBossesThisGame(),
+            gameManager.GetCoinsThisGame(), score, gameManager.GetBestMultiplier()));
 
         PlayerPrefs.Save();
 

@@ -22,6 +22,7 @@ public static class StoreMediaCapture
     {
         "Coins", "HighScore", "Games", "KillAliens", "KillAliensOneGame", "BossKilled", "BossKilled2",
         "BossKilledSpecies", "TutorialDone", "DailyRewardDate", "DailyRewardStreak", "Nick",
+        "QuestDate", "QuestIds", "QuestProgress", "QuestDone",
     };
     private static readonly string[] IntKeys = { "AdDeathCounter" };
 

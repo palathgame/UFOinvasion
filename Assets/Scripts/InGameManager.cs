@@ -25,6 +25,7 @@ public class InGameManager : MonoBehaviour
         {
             new GameObject("GameHud").AddComponent<GameHud>();
         }
+        DailyQuests.BeginGame();
         startGame();
         TutorialOverlay.ShowIfNeeded();
     }

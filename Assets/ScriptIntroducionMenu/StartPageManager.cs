@@ -26,6 +26,14 @@ public class StartPageManager : MonoBehaviour
         // Zadost o recenzi jen kdyz zrovna nevyskocila denni odmena.
         if (FindAnyObjectByType<DailyReward>() == null) ReviewPrompt.TryShow();
         PowerUpHelp.Create(nickName.transform);
+        DailyQuestsMenu.Create(nickName.transform);
+    }
+
+    // Na mobilu se appka casto jen obnovi z pozadi (scena se znovu nenacte),
+    // takze denni odmenu je potreba zkontrolovat i pri navratu do popredi.
+    private void OnApplicationPause(bool paused)
+    {
+        if (!paused) DailyReward.CheckAndShow();
     }
     public void StartGame() {
 
